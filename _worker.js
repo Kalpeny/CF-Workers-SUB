@@ -373,10 +373,6 @@ async function getSUB(api, request, 追加UA, userAgentHeader) {
 	let newapi = "";
 	let 订阅转换URLs = "";
 	let 异常订阅 = "";
-	const controller = new AbortController(); // 创建一个AbortController实例，用于取消请求
-	const timeout = setTimeout(() => {
-		controller.abort(); // 2秒后取消所有请求
-	}, 2000);
 
 	try {
 		// 使用Promise.allSettled等待所有API请求完成，无论成功或失败
@@ -471,8 +467,14 @@ async function getUrl(request, targetUrl, 追加UA, userAgentHeader) {
 	console.log(`请求方法: ${request.method}`);
 	console.log(`请求体: ${request.method === "GET" ? null : request.body}`);
 
-	// 发送请求并返回响应
-	return fetch(modifiedRequest);
+	const controller = new AbortController();
+	const timeout = setTimeout(() => controller.abort(), 2000);
+	try {
+		// 发送请求并返回响应
+		return await fetch(modifiedRequest, { signal: controller.signal });
+	} finally {
+		clearTimeout(timeout);
+	}
 }
 
 function isValidBase64(str) {
