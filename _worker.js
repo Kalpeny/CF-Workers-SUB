@@ -432,7 +432,6 @@ async function getSUB(api, request, 追加UA, userAgentHeader) {
 	} catch (error) {
 		console.error(error); // 捕获并输出错误信息
 	} finally {
-		clearTimeout(timeout); // 清除定时器
 	}
 
 	const 订阅内容 = await ADD(newapi + 异常订阅); // 将处理后的内容转换为数组
